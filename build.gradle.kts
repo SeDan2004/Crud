@@ -22,6 +22,7 @@ repositories {
 
 dependencies {
 	api("org.jooq:jooq:3.18.6")
+	jooqGenerator("org.postgresql:postgresql:42.2.5")
 	implementation("org.springframework.boot:spring-boot-starter-jooq")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -62,7 +63,7 @@ jooq {
 	edition.set(nu.studer.gradle.jooq.JooqEdition.OSS)
 
 	configurations {
-		create("orient") {
+		create("public") {
 			generateSchemaSourceOnCompilation.set(true)
 
 			jooqConfiguration.apply {
@@ -80,7 +81,7 @@ jooq {
 						name = "org.jooq.meta.postgres.PostgresDatabase"
 						schemata.addAll(
 								listOf(
-										org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("orient"),
+										org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("public"),
 								)
 						)
 					}
@@ -91,12 +92,18 @@ jooq {
 						isFluentSetters = true
 					}
 					target.apply {
-						packageName = "uz.orient.db.schema"
+						packageName = "com.example.db.schema"
 						directory = "$buildDir/generated-sources/jooq"
 						encoding = "UTF-8"
 					}
 				}
 			}
 		}
+	}
+}
+
+configure<SourceSetContainer> {
+	named("main") {
+		java.srcDirs(java.srcDirs, "$buildDir/generated-sources/jooq")
 	}
 }
