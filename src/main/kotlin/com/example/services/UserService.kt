@@ -12,7 +12,9 @@ class UserService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    fun getAllEmployee() = userRepository.findAll()
+    fun getEmployeeById(employeeId: Int) = userRepository.get(employeeId)
+    fun getAllEmployee() = userRepository.getAll()
+    fun getAllEmployeeShort() = userRepository.getAllShort()
     fun createEmployee(request: CreateEmployeeRequest) =
             JEmployeesRecord().apply {
                 fio = request.fio
@@ -20,4 +22,6 @@ class UserService {
                 positionId = request.positionId
                 companyId = request.companyId
             }.let(userRepository::create)
+
+    fun deleteEmployee(employeeId: Int) = userRepository.delete(employeeId)
 }
