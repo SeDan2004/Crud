@@ -1,7 +1,6 @@
 package com.example.model
 
 import java.time.LocalDate
-import java.util.*
 
 data class CreateEmployeeRequest(
         val fio: String,
