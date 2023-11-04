@@ -54,20 +54,20 @@ class CompanyRepository {
                              .fetchInto(CompanyIdAfterInsert::class.java)
 
     fun getEmployees(id: Int) : MutableList<EmployeeShort2> {
-        var employeeTable = Tables.EMPLOYEES
+        var employees = Tables.EMPLOYEES
 
-        return dsl.select(employeeTable.FIO,  employeeTable.DATE_OF_BIRTHDAY)
+        return dsl.select(employees.FIO,  employees.DATE_OF_BIRTHDAY)
                   .from(table)
-                  .join(employeeTable)
-                  .on(table.ID.eq(employeeTable.COMPANY_ID))
+                  .join(employees)
+                  .on(table.ID.eq(employees.COMPANY_ID))
                   .where(table.ID.eq(id))
                   .fetchInto(EmployeeShort2::class.java)
     }
 
     fun delete(id: Int) {
-        var employeeTable = Tables.EMPLOYEES
+        var employees = Tables.EMPLOYEES
         dsl.deleteFrom(table).where(table.ID.eq(id)).execute()
-        dsl.deleteFrom(employeeTable).where(employeeTable.COMPANY_ID.eq(id))
-                                     .execute()
+        dsl.deleteFrom(employees).where(employees.COMPANY_ID.eq(id))
+                                 .execute()
     }
 }

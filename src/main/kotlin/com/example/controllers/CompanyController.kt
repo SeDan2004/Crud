@@ -19,11 +19,11 @@ class CompanyController {
 
     @GetMapping("/get_director")
     fun getCompanyDirector(@RequestParam("id") companyId: Int) =
-            companyService.getCompanyDirector(companyId)
+            ResponseEntity(companyService.getCompanyDirector(companyId), HttpStatus.OK)
 
     @GetMapping("/get_company_employees")
     fun getCompanyEmployees(@RequestParam("id") companyId: Int) =
-            companyService.getCompanyEmployee(companyId)
+            ResponseEntity(companyService.getCompanyEmployee(companyId), HttpStatus.OK)
 
     @PostMapping("/add_company")
     fun addCompany(@RequestBody request: CreateCompanyRequest) =
