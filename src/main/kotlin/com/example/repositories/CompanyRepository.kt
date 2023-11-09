@@ -3,13 +3,12 @@ package com.example.repositories
 import com.example.db.schema.Tables
 import com.example.db.schema.tables.pojos.JCompany
 import com.example.db.schema.tables.records.JCompanyRecord
+import com.example.exceptions.DeleteAtFirstEmployees
 import com.example.model.CompanyDirector
-import com.example.model.CompanyIdAfterInsert
-import com.example.model.CreateCompanyRequest
+import com.example.model.CreateCompanyResponse
 import com.example.model.EmployeeShort2
 import org.jooq.DSLContext
-import org.jooq.Table
-import org.jooq.impl.DSL.row
+import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
@@ -34,40 +33,28 @@ class CompanyRepository {
                              .where(table.ID.eq(id))
                              .execute()
 
-    /*fun add(record: JCompanyRecord) =
+    fun add(record: JCompanyRecord) =
         dsl.newRecord(table, record).let {
             it.insert()
             it.refresh()
-            it.into(JCompany::class.java)
-        }*/
-
-    /*fun add(record: JCompanyRecord) =
-        dsl.insertInto(table).columns(table.NAME, table.DIRECTOR)
-                             .values(record.name.toString(), record.director.toString())
-                             .returningResult(table.ID)
-                             .fetchInto(CompanyIdAfterInsert::class.java)*/
-
-    fun add(name: String, director: String) =
-        dsl.insertInto(table).columns(table.NAME, table.DIRECTOR)
-                             .values(name, director)
-                             .returningResult(table.ID)
-                             .fetchInto(CompanyIdAfterInsert::class.java)
-
-    fun getEmployees(id: Int) : MutableList<EmployeeShort2> {
-        var employees = Tables.EMPLOYEES
-
-        return dsl.select(employees.FIO,  employees.DATE_OF_BIRTHDAY)
-                  .from(table)
-                  .join(employees)
-                  .on(table.ID.eq(employees.COMPANY_ID))
-                  .where(table.ID.eq(id))
-                  .fetchInto(EmployeeShort2::class.java)
-    }
+            it.into(CreateCompanyResponse::class.java)
+        }
 
     fun delete(id: Int) {
         var employees = Tables.EMPLOYEES
-        dsl.deleteFrom(table).where(table.ID.eq(id)).execute()
-        dsl.deleteFrom(employees).where(employees.COMPANY_ID.eq(id))
+        var employeesCount = dsl.select(count())
+                                .from(employees)
+                                .where(employees.COMPANY_ID.eq(id))
+                                .fetchOne(0, Int::class.java)
+
+        println(employeesCount)
+
+        if (employeesCount != 0) {
+            val msg = "Прежде чем удалить компанию, сперва удалите её сотрудников!"
+            throw DeleteAtFirstEmployees(msg)
+        } else {
+            dsl.deleteFrom(table).where(table.ID.eq(id))
                                  .execute()
+        }
     }
 }

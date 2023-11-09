@@ -1,6 +1,8 @@
 package com.example.repositories
 
 import com.example.db.schema.Tables
+import com.example.db.schema.tables.records.JPositionsRecord
+import com.example.model.CreatePositionResponse
 import com.example.model.EmployeeShort2
 import org.jooq.DSLContext
 import org.jooq.tools.reflect.Reflect.on
@@ -26,10 +28,12 @@ class PositionRepository {
                   .fetchInto(EmployeeShort2::class.java)
     }
 
-    fun add(position: String) =
-            dsl.insertInto(table).columns(table.POSITION)
-                                 .values(position)
-                                 .execute()
+    fun add(record: JPositionsRecord) =
+            dsl.newRecord(table, record).let {
+                it.insert()
+                it.refresh()
+                it.into(CreatePositionResponse::class.java)
+            }
 
     fun delete(positionId: Int) {
         var employees = Tables.EMPLOYEES
