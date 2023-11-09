@@ -1,27 +1,26 @@
 package com.example.controllers
 
+import com.example.model.CreatePositionRequest
 import com.example.services.PositionService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/positions")
 class PositionController {
 
     @Autowired
     lateinit var positionService: PositionService
 
-    @GetMapping("/get_employees_by_position_id")
-    fun getEmployeesByPositionId(@RequestParam("positionId") positionId: Int) =
+    @GetMapping("/{position_id}")
+    fun getEmployeesByPositionId(@PathVariable("position_id") positionId: Int) =
             positionService.getEmployeesByPositionId(positionId)
 
-    @PostMapping("/add_position")
-    fun addPosition(@RequestParam("position") position: String) =
+    @PostMapping("/add")
+    fun addPosition(@RequestBody position: CreatePositionRequest) =
             positionService.addPosition(position)
 
-    @PostMapping("/delete_position")
-    fun deletePosition(@RequestParam("positionId") positionId: Int) =
+    @DeleteMapping("/{position_id}")
+    fun deletePosition(@PathVariable("position_id") positionId: Int) =
             positionService.deletePositionById(positionId)
 }

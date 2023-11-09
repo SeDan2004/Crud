@@ -1,6 +1,7 @@
 package com.example.controllers
 
 import com.example.model.CreateCompanyRequest
+import com.example.model.CreateCompanyResponse
 import com.example.services.CompanyService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -8,33 +9,39 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/companies")
 class CompanyController {
 
     @Autowired
     lateinit var companyService: CompanyService
 
-    @GetMapping("/get_company")
-    fun getCompanyById(@RequestParam("id") companyId: Int) =
-            companyService.getCompanyById(companyId)
+    @GetMapping("/{company_id}")
+    fun getCompanyById(@PathVariable("company_id") companyId: Int) =
+            companyService.getByCompanyId(companyId)
 
-    @GetMapping("/get_director")
-    fun getCompanyDirector(@RequestParam("id") companyId: Int) =
+    @GetMapping("/director/{company_id}")
+    fun getCompanyDirector(@PathVariable("company_id") companyId: Int) =
             ResponseEntity(companyService.getCompanyDirector(companyId), HttpStatus.OK)
 
-    @GetMapping("/get_company_employees")
-    fun getCompanyEmployees(@RequestParam("id") companyId: Int) =
-            ResponseEntity(companyService.getCompanyEmployee(companyId), HttpStatus.OK)
+    @GetMapping("/employees/{company_id}")
+    fun getCompanyEmployees(@PathVariable("company_id") companyId: Int) =
+            ResponseEntity(companyService.getEmployeesByCompanyId(companyId), HttpStatus.OK)
 
-    @PostMapping("/add_company")
-    fun addCompany(@RequestBody request: CreateCompanyRequest) =
-            ResponseEntity(companyService.addCompany(request), HttpStatus.OK)
+    @PostMapping("/add")
+    fun addCompany(@RequestBody request: CreateCompanyRequest) : ResponseEntity<CreateCompanyResponse> {
+        return ResponseEntity(companyService.addCompany(request), HttpStatus.OK)
+    }
 
-    @PostMapping("/update_director")
-    fun updateCompanyDirector(@RequestParam("id") companyId: Int,
+    @PutMapping("/director/{company_id}")
+    fun updateCompanyDirector(@PathVariable("company_id") companyId: Int,
                               @RequestParam("director") director: String) =
             companyService.updateCompanyDirector(companyId, director)
 
-    @PostMapping("/delete_company")
-    fun deleteCompany(@RequestParam("id") companyId: Int) =
+    @DeleteMapping("/{company_id}")
+    fun deleteCompany(@PathVariable("company_id") companyId: Int) =
             companyService.deleteCompany(companyId)
+
+    @DeleteMapping("/employees/{company_id}")
+    fun deleteCompanyEmployees(@PathVariable("company_id") companyId: Int) =
+            companyService.deleteAllCompanyEmployees(companyId)
 }
