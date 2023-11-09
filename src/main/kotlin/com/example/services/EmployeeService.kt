@@ -2,15 +2,15 @@ package com.example.services
 
 import com.example.db.schema.tables.records.JEmployeesRecord
 import com.example.model.CreateEmployeeRequest
-import com.example.repositories.UserRepository
+import com.example.repositories.EmployeeRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class UserService {
+class EmployeeService {
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepository: EmployeeRepository
 
     fun getEmployeeById(employeeId: Int) = userRepository.get(employeeId)
     fun getAllEmployee() = userRepository.getAll()
