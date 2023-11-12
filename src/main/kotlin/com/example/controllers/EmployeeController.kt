@@ -21,7 +21,7 @@ class EmployeeController {
     fun getAllEmployees() = ResponseEntity(EmployeeService.getAllEmployee(), HttpStatus.OK)
     @GetMapping("/short")
     fun getAllEmployeesShort() = ResponseEntity(EmployeeService.getAllEmployeeShort(), HttpStatus.OK)
-    @PostMapping("/add")
+    @PostMapping
     fun addEmployee(@RequestBody request: CreateEmployeeRequest) = EmployeeService.createEmployee(request)
     @DeleteMapping("/{employee_id}")
     fun deleteEmployee(@PathVariable("employee_id") userId: Int) = EmployeeService.deleteEmployee(userId)

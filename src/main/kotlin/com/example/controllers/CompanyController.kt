@@ -27,14 +27,14 @@ class CompanyController {
     fun getCompanyEmployees(@PathVariable("company_id") companyId: Int) =
             ResponseEntity(companyService.getEmployeesByCompanyId(companyId), HttpStatus.OK)
 
-    @PostMapping("/add")
+    @PostMapping
     fun addCompany(@RequestBody request: CreateCompanyRequest) : ResponseEntity<CreateCompanyResponse> {
         return ResponseEntity(companyService.addCompany(request), HttpStatus.OK)
     }
 
-    @PutMapping("/director/{company_id}")
+    @PatchMapping("/director/{company_id}")
     fun updateCompanyDirector(@PathVariable("company_id") companyId: Int,
-                              @RequestParam("director") director: String) =
+                              @RequestBody director: String) =
             companyService.updateCompanyDirector(companyId, director)
 
     @DeleteMapping("/{company_id}")

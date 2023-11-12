@@ -20,7 +20,7 @@ class PositionController {
     fun getEmployeesByPositionId(@PathVariable("position_id") positionId: Int) =
             positionService.getEmployeesByPositionId(positionId)
 
-    @PostMapping("/add")
+    @PostMapping
     fun addPosition(@RequestBody position: CreatePositionRequest) =
             positionService.addPosition(position)
 
