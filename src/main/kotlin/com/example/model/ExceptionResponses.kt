@@ -14,3 +14,15 @@ data class ForeignKeyNotFoundData(
         val date: Date,
         val message: String?
 )
+
+data class FailedCompanyDeleteData(
+        val status: HttpStatus,
+        val date: Date,
+        val message: String?
+)
+
+data class BeforeDeleteEmployeeData(
+        val status: HttpStatus,
+        val date: Date,
+        val message: String?
+)
