@@ -63,7 +63,7 @@ jooq {
 	edition.set(nu.studer.gradle.jooq.JooqEdition.OSS)
 
 	configurations {
-		create("public") {
+		create("crud") {
 			generateSchemaSourceOnCompilation.set(true)
 
 			jooqConfiguration.apply {
@@ -81,7 +81,7 @@ jooq {
 						name = "org.jooq.meta.postgres.PostgresDatabase"
 						schemata.addAll(
 								listOf(
-										org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("public"),
+										org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("crud"),
 								)
 						)
 					}
