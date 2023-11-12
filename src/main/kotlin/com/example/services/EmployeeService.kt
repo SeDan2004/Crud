@@ -22,28 +22,34 @@ class EmployeeService {
     @Autowired
     private lateinit var companyRepository: CompanyRepository
 
+
+
     fun getEmployeeById(employeeId: Int) = employeeRepository.getById(employeeId)
     fun getAllEmployee() = employeeRepository.getAll()
     fun getAllEmployeeShort() = employeeRepository.getAllShort()
     fun createEmployee(request: CreateEmployeeRequest) : CreateEmployeeResponse {
-        val msg: String
 
-        if (!positionRepository.checkById(request.positionId)) {
-            msg = "Внешний ключ id(${request.positionId}) не найден в таблице positions!"
-            throw ForeignKeyNotFound(msg)
-        }
+        check(request)
 
-        if (!companyRepository.checkById(request.companyId)) {
-            msg = "Внешний ключ id(${request.companyId}) не найден в таблице companies!"
-            throw ForeignKeyNotFound(msg)
-        }
-
-        return JEmployeesRecord().apply {
+        val employee = JEmployeesRecord().apply {
             fio = request.fio
             dateOfBirthday = request.dateOfBirthday
             positionId = request.positionId
             companyId = request.companyId
-        }.let(employeeRepository::insert)
+        }.let(employeeRepository::save)
+
+        return CreateEmployeeResponse(employee.id)
     }
+
+    private fun check(request: CreateEmployeeRequest) {
+        if (!positionRepository.isExistsById(request.positionId))
+            notFound("Внешний ключ id(${request.positionId}) не найден в таблице positions!")
+
+        if (!companyRepository.isExistsById(request.companyId))
+            notFound("Внешний ключ id(${request.companyId}) не найден в таблице companies!")
+    }
+
+    fun notFound(msg: String): Nothing = throw ForeignKeyNotFound(msg)
+
     fun deleteEmployee(employeeId: Int) = employeeRepository.deleteById(employeeId)
 }

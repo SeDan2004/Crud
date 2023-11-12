@@ -3,6 +3,7 @@ package com.example.services
 import com.example.db.schema.tables.records.JCompaniesRecord
 import com.example.exceptions.FailedCompanyDelete
 import com.example.model.CreateCompanyRequest
+import com.example.model.CreateCompanyResponse
 import com.example.repositories.CompanyRepository
 import com.example.repositories.EmployeeRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,11 +27,14 @@ class CompanyService {
     fun updateCompanyDirector(companyId: Int, director: String) =
             companyRepository.updateDirector(companyId, director)
 
-    fun addCompany(request: CreateCompanyRequest) =
-            JCompaniesRecord().apply {
-                name = request.name
-                director = request.director
-            }.let(companyRepository::insert)
+    fun addCompany(request: CreateCompanyRequest): CreateCompanyResponse {
+        val company = JCompaniesRecord().apply {
+            name = request.name
+            director = request.director
+        }.let(companyRepository::save)
+
+        return CreateCompanyResponse(id = company.id)
+    }
     fun deleteCompanyById(id: Int) {
         val msg: String
 

@@ -26,7 +26,7 @@ class PositionService {
     fun addPosition(position: CreatePositionRequest) =
             JPositionsRecord().apply {
                 name = position.position
-            }.let(positionRepository::insert)
+            }.let(positionRepository::save)
 
     fun deletePositionById(id: Int) {
         val msg: String
