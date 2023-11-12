@@ -1,8 +1,12 @@
 package com.example.services
 
 import com.example.db.schema.tables.records.JEmployeesRecord
+import com.example.exceptions.ForeignKeyNotFound
 import com.example.model.CreateEmployeeRequest
+import com.example.model.CreateEmployeeResponse
+import com.example.repositories.CompanyRepository
 import com.example.repositories.EmployeeRepository
+import com.example.repositories.PositionRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -10,18 +14,36 @@ import org.springframework.stereotype.Service
 class EmployeeService {
 
     @Autowired
-    private lateinit var userRepository: EmployeeRepository
+    private lateinit var employeeRepository: EmployeeRepository
 
-    fun getEmployeeById(employeeId: Int) = userRepository.get(employeeId)
-    fun getAllEmployee() = userRepository.getAll()
-    fun getAllEmployeeShort() = userRepository.getAllShort()
-    fun createEmployee(request: CreateEmployeeRequest) =
-            JEmployeesRecord().apply {
-                fio = request.fio
-                dateOfBirthday = request.dateOfBirthday
-                positionId = request.positionId
-                companyId = request.companyId
-            }.let(userRepository::create)
+    @Autowired
+    private lateinit var positionRepository : PositionRepository
 
-    fun deleteEmployee(employeeId: Int) = userRepository.delete(employeeId)
+    @Autowired
+    private lateinit var companyRepository: CompanyRepository
+
+    fun getEmployeeById(employeeId: Int) = employeeRepository.getById(employeeId)
+    fun getAllEmployee() = employeeRepository.getAll()
+    fun getAllEmployeeShort() = employeeRepository.getAllShort()
+    fun createEmployee(request: CreateEmployeeRequest) : CreateEmployeeResponse {
+        val msg: String
+
+        if (!positionRepository.checkById(request.positionId)) {
+            msg = "Внешний ключ id(${request.positionId}) не найден в таблице positions!"
+            throw ForeignKeyNotFound(msg)
+        }
+
+        if (!companyRepository.checkById(request.companyId)) {
+            msg = "Внешний ключ id(${request.companyId}) не найден в таблице companies!"
+            throw ForeignKeyNotFound(msg)
+        }
+
+        return JEmployeesRecord().apply {
+            fio = request.fio
+            dateOfBirthday = request.dateOfBirthday
+            positionId = request.positionId
+            companyId = request.companyId
+        }.let(employeeRepository::insert)
+    }
+    fun deleteEmployee(employeeId: Int) = employeeRepository.deleteById(employeeId)
 }

@@ -1,6 +1,7 @@
 package com.example.services
 
-import com.example.db.schema.tables.records.JCompanyRecord
+import com.example.db.schema.tables.records.JCompaniesRecord
+import com.example.exceptions.FailedCompanyDelete
 import com.example.model.CreateCompanyRequest
 import com.example.repositories.CompanyRepository
 import com.example.repositories.EmployeeRepository
@@ -26,13 +27,21 @@ class CompanyService {
             companyRepository.updateDirector(companyId, director)
 
     fun addCompany(request: CreateCompanyRequest) =
-            JCompanyRecord().apply {
+            JCompaniesRecord().apply {
                 name = request.name
                 director = request.director
-            }.let (companyRepository::add)
+            }.let(companyRepository::insert)
+    fun deleteCompanyById(id: Int) {
+        val msg: String
 
-    fun deleteCompany(companyId: Int) = companyRepository.delete(companyId)
+        if (employeeRepository.checkByCompanyId(id)) {
+            msg = "Нельзя удалить компанию, если в ней есть работники!"
+            throw FailedCompanyDelete(msg)
+        }
+
+        companyRepository.deleteById(id)
+    }
 
     fun deleteAllCompanyEmployees(companyId: Int) =
-            employeeRepository.deleteAllCompanyEmployees(companyId)
+            employeeRepository.deleteByCompanyId(companyId)
 }
