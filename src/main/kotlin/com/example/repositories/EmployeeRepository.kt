@@ -11,15 +11,13 @@ import com.example.db.schema.Tables.POSITIONS
 import com.example.model.*
 
 @Repository
-class EmployeeRepository : AbstractRepository<JEmployees, JEmployeesRecord, CreateEmployeeResponse>() {
+class EmployeeRepository : AbstractRepository<JEmployees, JEmployeesRecord>() {
 
-    @Autowired
-    private lateinit var dsl: DSLContext
 
     override var table = EMPLOYEES
 
     override fun getById(id: Int) =
-            dsl.selectFrom(table).where(table.ID.eq(id)).fetchInto(JEmployees::class.java)
+            findById<JEmployees>(id)
 
     fun getAll(): List<JEmployees> =
             dsl.selectFrom(table).fetchInto(JEmployees::class.java)
@@ -53,12 +51,8 @@ class EmployeeRepository : AbstractRepository<JEmployees, JEmployeesRecord, Crea
                     dsl.selectFrom(table).where(table.POSITION_ID.eq(id))
             )
 
-    override fun insert(record: JEmployeesRecord) =
-            dsl.newRecord(table, record).let {
-                it.insert()
-                it.refresh()
-                it.into(CreateEmployeeResponse::class.java)
-            }
+    override fun save(record: JEmployeesRecord) =
+            store<JEmployees>(record)
 
     override fun deleteById(id: Int) {
         dsl.deleteFrom(table).where(table.ID.eq(id)).execute()

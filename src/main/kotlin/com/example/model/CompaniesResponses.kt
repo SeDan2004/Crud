@@ -6,4 +6,4 @@ data class EmployeePosition(
     val position: String
 )
 data class CompanyDirectorResponse(val director: String)
-data class CreateCompanyResponse(val id: String)
+data class CreateCompanyResponse(val id: Int)
