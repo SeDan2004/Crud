@@ -13,6 +13,10 @@ class PositionController {
     lateinit var positionService: PositionService
 
     @GetMapping("/{position_id}")
+    fun getPositionById(@PathVariable("position_id") positionId: Int) =
+            positionService.getPositionById(positionId)
+
+    @GetMapping("/employees/{position_id}")
     fun getEmployeesByPositionId(@PathVariable("position_id") positionId: Int) =
             positionService.getEmployeesByPositionId(positionId)
 

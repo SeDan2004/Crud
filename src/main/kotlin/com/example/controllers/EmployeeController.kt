@@ -15,14 +15,14 @@ class EmployeeController {
     private lateinit var EmployeeService: EmployeeService
 
     @GetMapping("/{employee_id}")
-    fun findUser(@PathVariable("employee_id") userId: Int) =
+    fun getEmployeeById(@PathVariable("employee_id") userId: Int) =
             ResponseEntity(EmployeeService.getEmployeeById(userId), HttpStatus.OK)
     @GetMapping("/all")
-    fun getAllUsers() = ResponseEntity(EmployeeService.getAllEmployee(), HttpStatus.OK)
+    fun getAllEmployees() = ResponseEntity(EmployeeService.getAllEmployee(), HttpStatus.OK)
     @GetMapping("/short")
-    fun getAllUsersShort() = ResponseEntity(EmployeeService.getAllEmployeeShort(), HttpStatus.OK)
+    fun getAllEmployeesShort() = ResponseEntity(EmployeeService.getAllEmployeeShort(), HttpStatus.OK)
     @PostMapping("/add")
-    fun addUser(@RequestBody request: CreateEmployeeRequest) = EmployeeService.createEmployee(request)
+    fun addEmployee(@RequestBody request: CreateEmployeeRequest) = EmployeeService.createEmployee(request)
     @DeleteMapping("/{employee_id}")
-    fun deleteUser(@PathVariable("employee_id") userId: Int) = EmployeeService.deleteEmployee(userId)
+    fun deleteEmployee(@PathVariable("employee_id") userId: Int) = EmployeeService.deleteEmployee(userId)
 }

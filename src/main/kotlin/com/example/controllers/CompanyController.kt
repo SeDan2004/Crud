@@ -39,7 +39,7 @@ class CompanyController {
 
     @DeleteMapping("/{company_id}")
     fun deleteCompany(@PathVariable("company_id") companyId: Int) =
-            companyService.deleteCompany(companyId)
+            companyService.deleteCompanyById(companyId)
 
     @DeleteMapping("/employees/{company_id}")
     fun deleteCompanyEmployees(@PathVariable("company_id") companyId: Int) =
