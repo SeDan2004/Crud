@@ -1,48 +1,41 @@
 package com.example.repositories
 
-import com.example.db.schema.Tables
+import com.example.db.schema.Tables.EMPLOYEES
+import com.example.db.schema.Tables.POSITIONS
+import com.example.db.schema.tables.JPositions
 import com.example.db.schema.tables.records.JPositionsRecord
 import com.example.model.CreatePositionResponse
 import com.example.model.EmployeeShort2
 import org.jooq.DSLContext
-import org.jooq.tools.reflect.Reflect.on
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
 @Repository
-class PositionRepository {
-
-    var table = Tables.POSITIONS
+class PositionRepository : AbstractRepository<JPositions, JPositionsRecord, CreatePositionResponse>() {
 
     @Autowired
     lateinit var dsl: DSLContext
 
-    fun getEmployees(positionId: Int) : List<EmployeeShort2> {
-        var employees = Tables.EMPLOYEES
+    override val table = POSITIONS
 
-        return dsl.select(employees.FIO, employees.DATE_OF_BIRTHDAY)
-                  .from(table)
-                  .join(employees)
-                  .on(table.ID.eq(employees.POSITION_ID))
-                  .where(employees.POSITION_ID.eq(positionId))
-                  .fetchInto(EmployeeShort2::class.java)
-    }
+    override fun getById(id: Int) =
+            dsl.selectFrom(table).where(table.ID.eq(id))
+                                 .fetchInto(JPositions::class.java)
 
-    fun add(record: JPositionsRecord) =
+    fun checkById(id: Int) =
+            dsl.fetchExists(
+                dsl.selectFrom(table).where(table.ID.eq(id))
+            )
+
+    override fun insert(record: JPositionsRecord) =
             dsl.newRecord(table, record).let {
                 it.insert()
                 it.refresh()
                 it.into(CreatePositionResponse::class.java)
             }
 
-    fun delete(positionId: Int) {
-        var employees = Tables.EMPLOYEES
-
-        dsl.deleteFrom(table).where(table.ID.eq(positionId))
-                             .execute()
-
-        dsl.update(employees).set(employees.POSITION_ID, 1)
-                             .where(employees.POSITION_ID.eq(positionId))
+    override fun deleteById(id: Int) {
+        dsl.deleteFrom(table).where(table.ID.eq(id))
                              .execute()
     }
 }
