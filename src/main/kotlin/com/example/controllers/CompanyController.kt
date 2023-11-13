@@ -1,7 +1,8 @@
 package com.example.controllers
 
-import com.example.model.CreateCompanyRequest
-import com.example.model.CreateCompanyResponse
+import com.example.model.Companies.CreateCompanyRequest
+import com.example.model.Companies.CreateCompanyResponse
+import com.example.model.Companies.UpdateDirectorRequest
 import com.example.services.CompanyService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -34,8 +35,8 @@ class CompanyController {
 
     @PatchMapping("/director/{company_id}")
     fun updateCompanyDirector(@PathVariable("company_id") companyId: Int,
-                              @RequestBody director: String) =
-            companyService.updateCompanyDirector(companyId, director)
+                              @RequestBody updateDirectorRequest: UpdateDirectorRequest) =
+            companyService.updateCompanyDirector(companyId, updateDirectorRequest)
 
     @DeleteMapping("/{company_id}")
     fun deleteCompany(@PathVariable("company_id") companyId: Int) =

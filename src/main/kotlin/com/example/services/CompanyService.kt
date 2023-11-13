@@ -2,8 +2,9 @@ package com.example.services
 
 import com.example.db.schema.tables.records.JCompaniesRecord
 import com.example.exceptions.FailedCompanyDelete
-import com.example.model.CreateCompanyRequest
-import com.example.model.CreateCompanyResponse
+import com.example.model.Companies.CreateCompanyRequest
+import com.example.model.Companies.CreateCompanyResponse
+import com.example.model.Companies.UpdateDirectorRequest
 import com.example.repositories.CompanyRepository
 import com.example.repositories.EmployeeRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,8 +25,11 @@ class CompanyService {
 
     fun getCompanyDirector(companyId: Int) = companyRepository.getDirector(companyId)
 
-    fun updateCompanyDirector(companyId: Int, director: String) =
-            companyRepository.updateDirector(companyId, director)
+    fun updateCompanyDirector(companyId: Int, request: UpdateDirectorRequest) =
+            JCompaniesRecord().apply {
+                id = companyId
+                director = request.director
+            }.let(companyRepository::save)
 
     fun addCompany(request: CreateCompanyRequest): CreateCompanyResponse {
         val company = JCompaniesRecord().apply {

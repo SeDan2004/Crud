@@ -2,13 +2,9 @@ package com.example.repositories
 
 import com.example.db.schema.Tables.COMPANIES
 import com.example.db.schema.tables.pojos.JCompanies
-import com.example.db.schema.tables.pojos.JEmployees
 import com.example.db.schema.tables.records.JCompaniesRecord
-import com.example.model.CompanyDirectorResponse
-import com.example.model.CreateCompanyResponse
-import org.jooq.DSLContext
+import com.example.model.Companies.CompanyDirectorResponse
 import org.jooq.impl.DSL.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -24,9 +20,6 @@ class CompanyRepository : AbstractRepository<JCompanies, JCompaniesRecord>() {
                     .where(table.ID.eq(id))
                     .fetchInto(CompanyDirectorResponse::class.java)
 
-    fun isExistsById(id: Int) =
-            dsl.fetchExists(table, table.ID.eq(id))
-
     override fun save(record: JCompaniesRecord) =
             store<JCompanies>(record)
 
@@ -34,9 +27,4 @@ class CompanyRepository : AbstractRepository<JCompanies, JCompaniesRecord>() {
             dsl.update(table).set(row(table.DIRECTOR), row(director))
                     .where(table.ID.eq(id))
                     .execute()
-
-    override fun deleteById(id: Int) {
-        dsl.deleteFrom(table).where(table.ID.eq(id))
-                .execute()
-    }
 }

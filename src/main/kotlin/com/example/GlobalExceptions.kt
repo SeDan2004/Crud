@@ -1,13 +1,7 @@
 package com.example
 
-import com.example.exceptions.BeforeDeleteEmployee
-import com.example.exceptions.DeleteAtFirstEmployees
-import com.example.exceptions.FailedCompanyDelete
-import com.example.exceptions.ForeignKeyNotFound
-import com.example.model.BeforeDeleteEmployeeData
-import com.example.model.DeleteAtFirstEmployeesData
-import com.example.model.FailedCompanyDeleteData
-import com.example.model.ForeignKeyNotFoundData
+import com.example.exceptions.*
+import com.example.model.Exceptions.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -56,5 +50,25 @@ class GlobalExceptions {
         val pojosClass = BeforeDeleteEmployeeData(status, currentDate, msg)
 
         return ResponseEntity(pojosClass, HttpStatus.NOT_ACCEPTABLE)
+    }
+
+    @ExceptionHandler(EmployeeNotFound::class)
+    fun employeeNotFoundException(ex: Exception) : ResponseEntity<EmployeeNotFoundData> {
+        val status = HttpStatus.NOT_FOUND
+        val currentDate = Date()
+        val msg = ex.message
+        val pojosClass = EmployeeNotFoundData(status, currentDate, msg)
+
+        return ResponseEntity(pojosClass, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(NotFoundPagNum::class)
+    fun notFoundPagNumException(ex: Exception) : ResponseEntity<NotFoundPagNumData> {
+        val status = HttpStatus.NOT_FOUND
+        val currentDate = Date()
+        val msg = ex.message
+        val pojosClass = NotFoundPagNumData(status, currentDate, msg)
+
+        return ResponseEntity(pojosClass, HttpStatus.NOT_FOUND)
     }
 }

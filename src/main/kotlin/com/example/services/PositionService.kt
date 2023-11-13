@@ -2,7 +2,7 @@ package com.example.services
 
 import com.example.db.schema.tables.records.JPositionsRecord
 import com.example.exceptions.BeforeDeleteEmployee
-import com.example.model.CreatePositionRequest
+import com.example.model.Positions.CreatePositionRequest
 import com.example.repositories.EmployeeRepository
 import com.example.repositories.PositionRepository
 import org.springframework.beans.factory.annotation.Autowired

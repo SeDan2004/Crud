@@ -1,10 +1,7 @@
 package com.example.repositories
 
-import com.example.db.schema.Tables
-import com.example.db.schema.tables.pojos.JEmployees
-import com.example.model.CreatePositionResponse
 import org.jooq.*
-import org.jooq.impl.TableImpl
+import org.jooq.impl.DSL.count
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import java.io.Serializable
@@ -39,5 +36,14 @@ open abstract class AbstractRepository<T : Serializable, S : UpdatableRecord<S>>
                 it.into(T::class.java)
             }
 
-    abstract fun deleteById(id: Int)
+    fun getCountAll() =
+            dsl.selectCount().from(table)
+                             .fetchOne(0, Int::class.java)!!
+
+    fun isExistsById(id: Int) =
+            dsl.fetchExists(table, TABLE_ID.eq(id))
+
+    fun deleteById(id: Int) =
+            dsl.deleteFrom(table).where(TABLE_ID.eq(id))
+                                 .execute()
 }

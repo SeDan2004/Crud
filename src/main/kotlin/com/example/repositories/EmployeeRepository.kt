@@ -1,14 +1,15 @@
 package com.example.repositories
 
-import com.example.db.schema.Tables
 import com.example.db.schema.tables.pojos.JEmployees
 import com.example.db.schema.tables.records.JEmployeesRecord
-import org.jooq.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import com.example.db.schema.Tables.EMPLOYEES
 import com.example.db.schema.Tables.POSITIONS
-import com.example.model.*
+import com.example.model.Companies.EmployeePosition
+import com.example.model.Employees.EmployeeShort
+import com.example.model.Employees.EmployeeShort2
+import com.example.model.Employees.GridResponse
+import org.jooq.impl.DSL.row
 
 @Repository
 class EmployeeRepository : AbstractRepository<JEmployees, JEmployeesRecord>() {
@@ -22,13 +23,18 @@ class EmployeeRepository : AbstractRepository<JEmployees, JEmployeesRecord>() {
     fun getAll(): List<JEmployees> =
             dsl.selectFrom(table).fetchInto(JEmployees::class.java)
 
+    fun getByLimitAndOffset(limit: Int, offset: Int) =
+            dsl.selectFrom(table).orderBy(table.ID.asc())
+                                 .limit(limit)
+                                 .offset(offset)
+                                 .fetchInto(JEmployees::class.java)
+
     fun getByCompanyId(id: Int) =
             dsl.select(table.FIO, table.DATE_OF_BIRTHDAY, POSITIONS.NAME)
                     .from(table)
                     .join(POSITIONS)
                     .on(table.POSITION_ID.eq(POSITIONS.ID))
                     .fetchInto(EmployeePosition::class.java)
-
 
     fun getByPositionId(id: Int) =
             dsl.select(table.FIO, table.DATE_OF_BIRTHDAY)
@@ -54,9 +60,15 @@ class EmployeeRepository : AbstractRepository<JEmployees, JEmployeesRecord>() {
     override fun save(record: JEmployeesRecord) =
             store<JEmployees>(record)
 
-    override fun deleteById(id: Int) {
-        dsl.deleteFrom(table).where(table.ID.eq(id)).execute()
-    }
+    fun updatePosition(id: Int, positionId: Int) =
+            dsl.update(table).set(table.POSITION_ID, positionId)
+                             .where(table.ID.eq(id))
+                             .execute()
+
+    fun updateCompany(id: Int, companyId: Int) =
+            dsl.update(table).set(table.COMPANY_ID, companyId)
+                             .where(table.ID.eq(id))
+                             .execute()
 
     fun deleteByCompanyId(companyId: Int) =
             dsl.deleteFrom(table).where(table.COMPANY_ID.eq(companyId))

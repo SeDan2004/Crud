@@ -1,4 +1,4 @@
-package com.example.model
+package com.example.model.Companies
 
 data class EmployeePosition(
     val fio: String,
